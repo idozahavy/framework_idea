@@ -1,0 +1,69 @@
+https://css-tricks.com/an-introduction-to-web-components/
+https://developer.mozilla.org/en-US/docs/Web/API/Window/customElements
+https://lit-html.polymer-project.org/
+component libraries
+
+Figure a way to make it seamless transition between before render to rendered
+so it would not show the parentheses.
+maybe copy the inner html, render replacements for parentheses(in texts only) and then render completely.
+if render attribute is present in first render, render it as true.
+
+find a way for react through variables, like changing a variable in an array.
+
+run components scripts as scoped (later maybe add scoped='no/false/off/0')
+find component variable in this order::
+	1. scoped scripts
+	2. global window
+
+V render = (element, var_dict)
+
+convert {} function to regular function call
+
+console.log if both no-render and render are present
+
+
+::: load behavior :::
+	=options=
+		add js file to end of body
+		add to head a specific files
+		import at end of body and get the render function then use it on the requested element
+		load screen: add before body render a script that hide the body and show a loading screen
+	
+	reads tag name and check the render or no-render attribute (if parentheses renders the output)
+	{{varName}} applies to variables
+	{function} applies to functions of return or yield for for-loops
+
+
+::: app :::
+	compiled(ready-to-go) components (separate or hierarchical html, js, css files)
+	=options=
+		yield time (immediately rendered or rendered on finish)
+		search components before html insertion
+		change scoped scripts default (default scoped=true)
+		change render default (default render=true)
+
+
+::: html :::
+	=actions sequence=
+		get all styles
+		pre html insertion scripts
+		app search components
+		html insertion
+		post html insertion scripts
+
+
+::: Element :::
+	normal html element(string) without any changes that occur
+	can contains multiple tag elements inside
+	can be rendered very fast
+	need not to impact the performance at all
+
+
+// different name
+::: Element++ :::
+	only element with the {} or {{}} parentheses to improve performance
+	consists of tag, attributes, inner text and other Elements(normal Element or Element++)
+	contains the original source
+	every render will render from the original source
+	caches the rendered output for fast re-render of parent components if not altered
+	connected to the variables that occur in the element

@@ -1,0 +1,36 @@
+<style>
+	header {
+		width:50%;
+		max-width: 500px;
+		margin: auto;
+	}
+</style>
+<script>
+	var links = [
+		"home",
+		"about",
+		"contact"
+	]
+</script>
+
+<header>
+	<nav>
+		<ul>
+			{
+				for (link of links) {
+					yield <li><a href="{{link}}">{{link}}</a></li>
+				}
+			}
+		</ul>
+	</nav>
+</header>
+<footer>
+</footer>
+
+<script>
+	var links = [
+		"home",
+		"about",
+		"contact"
+	]
+</script>

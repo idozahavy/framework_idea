@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="RunAfterBodyHTML++.js"></script>
+</head>
+<body>
+
+	<div render="{{render}}">
+		1 = {{ render }}
+	</div>
+
+	<div render="false">
+		not rendered
+	</div>
+
+	<index.html></index.html>
+	<component src="index.html"></component>
+
+	<span>{{ gg }}</span>
+
+
+	<script render="off" src="RunBodyHTML++.js"></script>
+	<script no-render>
+		var gg = "r";
+		var render = 1;
+		import("RunHJC.js").then((render)=>{
+			render(document.body);
+		})
+	</script>
+</body>
+</html>

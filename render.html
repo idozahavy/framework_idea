@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+
+	<div id="first" render="{{ render }}">
+		<span></span>
+		1 = {{ render }}
+		<span></span>
+	</div>
+
+	<div render="{{render }}">
+		1 = {{render }}
+	</div>
+
+	<div render="{{rendered}}">
+		render attribute value is {{rendered}}
+	</div>
+
+	<button onclick="reRender()">
+		re render
+	</button>
+
+	<script src="render.js"></script>
+	<script src="reactor.js"></script>
+	<script src="HTML++.js"></script>
+	<script>
+		var dict = {rendered: false};
+
+		InitElement(document.body, dict);
+		
+		function reRender() {
+			dict.rendered=!dict.rendered;
+		}
+
+	</script>
+</body>
+</html>
