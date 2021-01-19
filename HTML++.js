@@ -64,7 +64,7 @@ function InitElement(element, dict, parentRenders = true) {
 function reactiveRenderBind(element, element_props, dict, dict_prop, notes, alwaysRender = false) {
   var func = () => {
     console.log("tries rendering", element, (element.parentNode||element.ownerElement));
-    if ((element.parentNode||element.ownerElement).render || alwaysRender) {
+    if (alwaysRender || canRender(element.parentNode||element.ownerElement)) {
       console.log("is rendering",element_props, jsRender(element.originalValue, notes, dict));
       element_props.forEach((propName)=> {
         element[propName] = jsRender(element.originalValue, notes, dict);
@@ -76,4 +76,15 @@ function reactiveRenderBind(element, element_props, dict, dict_prop, notes, alwa
   });
 }
 
-function reRenderElement(element, propName) {}
+function canRender(element){
+  if (element.render || element.render == undefined){
+    // check if elements with no parent can exist or/and be showed on screen
+    if (element == document || (!element.ownerElement && !element.parentNode)){
+      // if your top or have no parent
+      return true;
+    }
+    return canRender((element.ownerElement || element.parentNode))
+  }
+  console.log("cant render, stopped at",element);
+  return element.render;
+}
