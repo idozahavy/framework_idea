@@ -13,13 +13,13 @@
 		<span></span>
 	</div>
 
-	<div render="{{render }}">
+	<!-- <div render="{{render }}">
 		1 = {{render }}
 	</div>
 
 	<div render="{{rendered}}">
 		render attribute value is {{rendered}}
-	</div>
+	</div> -->
 
 	<button onclick="reRender()">
 		re render
@@ -29,12 +29,16 @@
 	<script src="reactor.js"></script>
 	<script src="HTML++.js"></script>
 	<script>
-		var dict = {rendered: false};
+		var dict = {
+			rendered: false,
+			render: false
+	 	};
 
 		InitElement(document.body, dict);
 		
 		function reRender() {
-			dict.rendered=!dict.rendered;
+			dict.rendered = !dict.rendered;
+			dict.render = !dict.render;
 		}
 
 	</script>

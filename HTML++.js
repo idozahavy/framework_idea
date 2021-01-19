@@ -1,62 +1,78 @@
-function InitElement(element, dict) {
+function InitElement(element, dict, parentRenders = true) {
   var render = element.getAttribute("render");
   element.render = render === null || render == undefined || render.trim().startsWith("{") || !(render == "false" || render == "0");
-  element.render = element.render && element.outerHTML.indexOf("{");
-  if (!element.render) return element;
 
   console.log("element", element);
 
   element.originalOuterHTML = element.outerHTML;
-  element.notes = {};
-  element.reversedNotes = {};
+  element.attrNotesDict = {};
+  element.attrReversedNotes = {};
 
   var idx, attr, attrNote;
   for (idx = 0; idx < element.attributes.length; idx++) {
     attr = element.attributes[idx];
-    attrNote = getNotes(attr.textContent || attr.value);
-    if (attrNote.length > 0) {
+    console.log("attr",attr);
+    attrNotes = getNotes(attr.textContent || attr.value);
+    if (attrNotes.length > 0) {
       attr.originalValue = attr.value;
-      element.notes[idx] = attrNote;
-      element.reversedNotes[idx] = Object.assign([], attrNote).reverse();
-      attr.value = jsRender(attr.originalValue, element.reversedNotes[idx], dict);
+      element.attrNotesDict[attr.name] = attrNotes;
+      element.attrReversedNotes[attr.name] = Object.assign([], attrNote).reverse();
+      if (parentRenders){
+        if (attr.name === "render"){ // renders the render attribute to see if needs to be rendered
+          attr.value = jsRender(attr.originalValue, element.attrReversedNotes[attr.name], dict);
+          createReactive(attr,"value",{pre_setter:(newValue) => {element.render = newValue=="true";console.log("render value changed",element, newValue=="true");}} )
+          console.log("render attr notes", attrNotes);
+          for (var noteKey in attrNotes) {
+            reactiveRenderBind(attr,["value","nodeValue"],dict,attrNotes[noteKey].name,attrNotes,true);
+          }
+        }
+        else if (element.render){
+          attr.value = jsRender(attr.originalValue, element.attrReversedNotes[attr.name], dict);
+          for (var noteKey in attrNotes) {
+            reactiveRenderBind(attr,["value","nodeValue"],dict,attrNotes[noteKey].name,attrNotes);
+          }
+        }
+      }
     }
   }
   var child, idx, textNotes;
   for (idx in element.childNodes) {
     child = element.childNodes[idx];
 
-    // console.log("child node", child.nodeType, child);
+    // child node text
     if (child.nodeType === 3) {
-      // child node text
       textNotes = getNotes(child.nodeValue);
       if (textNotes.length > 0) {
         child.notes = textNotes;
         child.reversedNotes = Object.assign([], textNotes).reverse();
         child.originalValue = child.nodeValue;
         console.log("text notes ", textNotes);
-				child.nodeValue = jsRender(child.nodeValue, child.textReversedNotes, dict);
-        for (var noteIdx in child.notes) {
-
-          reactiveBind(child, "nodeValue", dict, child.notes[noteIdx].name, child.notes);
+        if (parentRenders && element.render){
+          child.nodeValue = jsRender(child.nodeValue, child.textReversedNotes, dict);
+          for (var noteIdx in child.notes) {
+            reactiveRenderBind(child, ["value","nodeValue"], dict, child.notes[noteIdx].name, child.notes);
+          }
         }
       }
     } else if (child.nodeName !== "SCRIPT" && child.nodeType === 1) {
       // child node element
-      InitElement(child,dict);
+      InitElement(child,dict, element.render);
     }
   }
 }
 
-function reactiveBind(element, element_prop, dict, dict_prop, notes) {
+function reactiveRenderBind(element, element_props, dict, dict_prop, notes, alwaysRender = false) {
+  var func = () => {
+    console.log("tries rendering", element, (element.parentNode||element.ownerElement));
+    if ((element.parentNode||element.ownerElement).render || alwaysRender) {
+      console.log("is rendering",element_props, jsRender(element.originalValue, notes, dict));
+      element_props.forEach((propName)=> {
+        element[propName] = jsRender(element.originalValue, notes, dict);
+      })
+    }
+  };
   createReactive(dict, dict_prop, {
-    post_setter: (val, propName, object) => {
-      var thisDict = {};
-			thisDict[propName] = val;
-			// console.log("reactive element",element);
-			// console.log("reactive element prop",element_prop);
-			// console.log("reactive dict", thisDict);
-      element[element_prop] = jsRender(element.originalValue, notes, thisDict);
-    },
+    post_setter: func,
   });
 }
 
