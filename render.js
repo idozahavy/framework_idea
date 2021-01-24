@@ -1,20 +1,24 @@
-function jsRender(origin, reversedNotes, dict={}) {
+function jsRender(origin, reversedNotes, dict = {}, func_dict = {}) {
   var rendered = origin;
   var note, replacement;
   for (idx in reversedNotes) {
-		note = reversedNotes[idx];
-		replacement = "";
+    note = reversedNotes[idx];
+    replacement = "";
     switch (note.type) {
       case "variable":
         {
-					if (note.name in dict && dict[note.name] !== undefined) replacement = dict[note.name];
-					// console.log(dict,note.name, dict[note.name]);
+          if (note.name in dict && dict[note.name] !== undefined) replacement = dict[note.name];
+          // console.log(dict,note.name, dict[note.name]);
           rendered = rendered.substring(0, note.start) + replacement + rendered.substring(note.end + 1, rendered.length);
         }
         break;
       case "function":
         {
-          rendered = rendered.substring(0, note.start) + dict[note.name]() + rendered.substring(note.end + 1, rendered.length);
+          if (note.name in func_dict) {
+            rendered = rendered.substring(0, note.start) + func_dict[note.name](dict) + rendered.substring(note.end + 1, rendered.length);
+          } else {
+            rendered = rendered.substring(0, note.start) + rendered.substring(note.end + 1, rendered.length);
+          }
         }
         break;
     }
@@ -74,28 +78,23 @@ function getNoteType(inner) {
 }
 
 /**
- * 
- * @param {string} inner 
- * @param {string} type 
+ *
+ * @param {string} inner
+ * @param {string} type
  */
 function getNoteName(inner, type) {
   switch (type) {
     case "variable":
-      return inner.substring(1, inner.length-1).trim();
+      return inner.substring(1, inner.length - 1).trim();
     case "function":
       return inner.substring(1, inner.indexOf("(")).trim();
   }
 }
 
-
-
-
 // module.exports.jsRender = jsRender;
 // module.exports.getNotes = getNotes;
 
 // console.log(module);
-
-
 
 // var text = `<div render="{{name}}">
 // my name is {{ name }} {{lname}}

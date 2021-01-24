@@ -53,13 +53,13 @@ function createReactive(
 
   if (!object.__vm_store[property_name]) {
     // first time initialization for property name
-    object.__vm_store[property_name] = {};
-    object.__vm_store[property_name].value = object.__vm_store[property_name];
 
-    object.__vm_store[property_name].pre_setter_array = [];
-    object.__vm_store[property_name].pre_getter_array = [];
-    object.__vm_store[property_name].post_setter_array = [];
-
+    object.__vm_store[property_name] = {
+      value: object[property_name],
+      pre_setter_array: [],
+      pre_getter_array: [],
+      post_setter_array: [],
+    }
     object.__vm_store[property_name].set = createObjectPropSetterFunc(object.__vm_store, property_name, object);
     object.__vm_store[property_name].get = createObjectPropGetterFunc(object.__vm_store, property_name, object);
 

@@ -1,0 +1,4 @@
+<div>
+	my component {{render}}
+	<content />
+</div>

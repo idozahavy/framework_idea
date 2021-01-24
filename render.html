@@ -7,6 +7,8 @@
 </head>
 <body>
 
+	<component src="/comp1.htmlp"></component>
+
 	<div id="first" render="{{ render }}">
 		<span></span>
 		1 = {{ render }}
@@ -14,7 +16,7 @@
 	</div>
 
 	<div render="{{render }}">
-		1 = {{render }}
+		1 = {{render}}
 	</div>
 
 	<div render="true">
@@ -24,21 +26,26 @@
 	<button onclick="reRender()">
 		re render
 	</button>
+	<div>
+		{
+			return render * rendered
+		}
+	</div>
 
 	<script src="render.js"></script>
 	<script src="reactor.js"></script>
 	<script src="HTML++.js"></script>
 	<script>
 		var dict = {
-			rendered: false,
-			render: false
+			rendered: 1,
+			render: 2
 	 	};
 
 		InitElement(document.body, dict);
 		
 		function reRender() {
-			dict.rendered = !dict.rendered;
-			dict.render = !dict.render;
+			dict.rendered++;
+			dict.render++;
 		}
 
 	</script>
