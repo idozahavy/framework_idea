@@ -68,8 +68,14 @@ function ElementChildrenInitialization(element, dict) {
             reactiveRenderBind(child, ["value", "nodeValue"], dict, textNote.name, textNotes);
           } else if (textNote.type === "function") {
             // all keys bind
-            for (var key in dict) {
-              reactiveRenderBind(child, ["value", "nodeValue"], dict, key, textNotes);
+            var beforePar = textNote.inner.split('(')[0];
+            // if the first thing is the parenthesis
+            if (beforePar.trim().length<1){
+              var lexerKeys = textNote.inner.split('(')[1].split(')')[0].split(',').map((val)=>val.trim());
+              console.log("lexerKeys",lexerKeys);
+              for (var keyIdx in lexerKeys) {
+                reactiveRenderBind(child, ["value", "nodeValue"], dict, lexerKeys[keyIdx], textNotes);
+              }
             }
           }
         }
@@ -115,6 +121,7 @@ function manipulateNotes(notes) {
   for (idx in notes) {
     note = notes[idx];
     if (note.type === "function") {
+      console.log(note);
       key = makeKey(35);
       while (key in func_pool) key = makeKey(35);
       func_pool[key] = Function("dict", globalInitText + note.inner);
